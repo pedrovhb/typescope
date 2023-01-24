@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "typescope"
+version = "0.1.0"
+description = ""
+authors = ["Pedro Batista <pedrovhb@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+textual = {extras = ["dev"], version = "^0.10.1"}
+libcst = "^0.4.9"
+rich = "^13.2.0"
+loguru = "^0.6.0"
+intervaltree = "^3.1.0"
+diskcache = "^5.4.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
