@@ -27,19 +27,13 @@ I'm reminded of solving physics questions in university by treating units of mea
 
 ### How do I run it?
 
-The code is currently in a very early stage, so there's no package yet, but it's simple.
-The following should work:
+The code is currently in a very early stage, so there's no package yet. If want to try it out, you can follow these steps:
 
-```bash
-git clone
-cd typescope
-poetry install
-
-# You'll need to get pyre running first -
-poetry run pyre
-
-poetry run typescope <root of your project>
-```
+1. Clone the repo
+2. `cd` into the repo
+3. Create a `poetry` environment and install the project
+4. Before running typescope, start a `pyre` server in the project directory
+5. Run `poetry run typescope <project path>`
 
 ### What's on the roadmap?
 
