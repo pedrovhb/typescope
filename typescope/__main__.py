@@ -115,7 +115,7 @@ class CodeView(Static, can_focus=True):
     async def watch_active_file(self, file: Path | None) -> None:
         if file is None:
             return
-        file = self.root_path / file
+        file = (self.root_path / file).absolute()
 
         if file.is_dir() or file.suffix.lower() not in (".py", ".pyi", ".pyx"):
             return
