@@ -105,7 +105,11 @@ class DiskCacheRepoManager(meta.FullRepoManager):
         #  ParentNodeProvider
 
     def calculate_md5(self) -> int:
-        return hash(frozenset(md5(Path(path).read_bytes()) for path in self._paths))
+        return hash(
+            frozenset(
+                md5(Path(self.root_path, path).absolute().read_bytes()) for path in self._paths
+            )
+        )
 
     @property
     def dirty(self) -> bool:
@@ -115,7 +119,7 @@ class DiskCacheRepoManager(meta.FullRepoManager):
 
     def get_cache_for_path(self, path: str) -> Mapping["ProviderT", object]:
         self.resolve_cache()
-        # path = str(Path(path).relative_to(self._repo_root_dir))
+        path = str(Path(path).relative_to(self.root_path))
         return {provider: self._disk_cache[provider][path] for provider in self._providers}
 
     def resolve_cache(self) -> None:
@@ -151,9 +155,10 @@ class DiskCacheRepoManager(meta.FullRepoManager):
         """
 
         print(f"Parsing module for {path}")
-        file_contents = Path(path).read_text()
+        path_obj = Path(self.root_path, path)
+        file_contents = path_obj.read_text()
         module = cst.parse_module(file_contents)
-        cache = self.get_cache_for_path(path)
+        cache = self.get_cache_for_path(path_obj)
 
         # todo - more granular, per-file cache:
         # file_md5 = md5(file_contents := Path(path).read_bytes()).hexdigest()
@@ -220,7 +225,7 @@ class RepoInfo:
     def __init__(self, repo_root: Path | str) -> None:
         self._cache = diskcache.Cache(".typescope_full_cache")
 
-        repo_root = Path(repo_root).absolute()
+        self.repo_root = Path(repo_root).absolute()
         # paths = [str(p.relative_to(repo_root)) for p in Path(repo_root.absolute()).rglob("*.py")]
         paths = [str(p.relative_to(repo_root)) for p in repo_root.rglob("*.py")]
         self._paths = paths
@@ -241,7 +246,6 @@ class RepoInfo:
                 meta.FullyQualifiedNameProvider,
             ),
         )
-        self.repo_root = repo_root
 
     @lru_cache(maxsize=512)
     def get_src_info(self, path: Path | str) -> SourceFileInfo:

@@ -106,7 +106,7 @@ class CodeView(Static, can_focus=True):
         )
         self._code_views = {}
 
-        self.root_path = root_path
+        self.root_path = root_path.absolute()
         self._repo_manager = RepoInfo(self.root_path)
         self._code_info: SourceFileInfo | None = None
 
@@ -131,7 +131,8 @@ class CodeView(Static, can_focus=True):
         # Offload the processing of source files to the default
         # executor, so we can load the file contents in the main
         # thread with less latency.
-        asyncio.create_task(asyncio.to_thread(_set_code_info))
+        # asyncio.create_task(asyncio.to_thread(_set_code_info))
+        _set_code_info()
 
     def on_click(self, event: events.Click) -> None:
         self.log.info("click", event)
